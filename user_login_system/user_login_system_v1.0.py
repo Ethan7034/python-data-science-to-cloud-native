@@ -1,14 +1,15 @@
 #User Portal Login System V1.0
+#Author: Ethan Gu
 
 user_database = {"User": "123456"}
 
-print("=== Welcome to the Login System ===")
+print("=== Welcome to the Login System V1.0 ===")
 
 while True:
     print("\n-----------------------------")
     print("1. Sign UP")
     print("2. Sign IN")
-    print("3. Log OUT")
+    print("3. Log OFF")
     print("4. System EXIT")
     
     try:
@@ -35,7 +36,7 @@ while True:
         pwd = input("Please enter your PASSWORD:")
         
         if user in user_database and user_database[user] == pwd:
-            print("✅ ACCESS")
+            print("✅ ACCESS!")
         else:
             print("❌ FAILURE: INCORRECT username or password!")
         continue
@@ -46,7 +47,7 @@ while True:
         
         if user in user_database and user_database[user] == pwd:
             del user_database[user]
-            print("✅ Account LOG OUT!")
+            print("✅ Account LOG OFF!")
         else:
             print("❌ FAILURE: INCORRECT username or password!")
         continue
