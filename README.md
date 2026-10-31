@@ -1,3 +1,9 @@
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-2.0+-150458?style=flat-square&logo=pandas&logoColor=white)
+![NLP](https://img.shields.io/badge/NLP-SnowNLP-yellow?style=flat-square)
+![Cloudflare](https://img.shields.io/badge/Cloudflare_Tunnel-F38020?style=flat-square&logo=cloudflare&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-Ethan7034-181717?style=flat-square&logo=github&logoColor=white)
 # Python Data Science to Cloud-Native
 
 ## 📌 About This Repository
