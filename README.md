@@ -3,7 +3,7 @@
 ![Pandas](https://img.shields.io/badge/Pandas-2.0+-150458?style=flat-square&logo=pandas&logoColor=white)
 ![NLP](https://img.shields.io/badge/NLP-SnowNLP-yellow?style=flat-square)
 ![Cloudflare](https://img.shields.io/badge/Cloudflare_Tunnel-F38020?style=flat-square&logo=cloudflare&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-Ethan7034-181717?style=flat-square&logo=github&logoColor=white)
+![NLTK](https://img.shields.io/badge/NLTK-Natural%20Language%20Toolkit-blue)
 # Python Data Science to Cloud-Native
 
 ## 📌 About This Repository

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Retriever</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+
+        h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 1px; }
+        
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .search-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 20px;
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+
+        button.search-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button.search-btn:hover { background-color: var(--accent-hover); }
+        button.search-btn:disabled { background-color: #475569; cursor: not-allowed; }
+
+        .results { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+        
+        .results li {
+            background-color: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            line-height: 1.6;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .error-msg { border-left-color: var(--danger) !important; color: #fca5a5; }
+        
+        /* 加载动画 */
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 id="title">📡 News Retriever</h1>
+        <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">English</button>
+    </div>
+
+    <div class="search-wrapper">
+        <input type="text" id="keywordInput" placeholder="请输入搜索关键词..." onkeypress="if(event.key === 'Enter') searchNews()">
+        <button class="search-btn" id="searchBtn" onclick="searchNews()">
+            <span id="btnText">搜索</span>
+        </button>
+    </div>
+
+    <ul class="results" id="resultsList">
+        <!-- 结果渲染区 -->
+    </ul>
+</div>
+
+<script>
+    let currentLang = 'zh';
+    const i18n = {
+        zh: {
+            title: "📡 极客新闻检索器",
+            placeholder: "输入关键词，例如：人工智能...",
+            searchBtn: "搜索",
+            searching: "搜索中...",
+            langBtn: "English",
+            emptyMsg: "❌没有找到相关新闻。",
+            errSLA: "❌服务器已关闭。开放时间 09:30 - 21:30。",
+            errWAF: "⚠️请求被 WAF 拦截：检测到恶意爬虫。",
+            errRate: "⚠️请求过于频繁，请稍后再试。",
+            errGeneral: "❌获取数据失败，请检查网络。"
+        },
+        en: {
+            title: "📡 Geek News Retriever",
+            placeholder: "Enter keyword (e.g., AI)...",
+            searchBtn: "Search",
+            searching: "Searching...",
+            langBtn: "中文",
+            emptyMsg: "❌No news found.",
+            errSLA: "❌Service is closed. SLA Window 09:30 - 21:30.",
+            errWAF: "⚠️Forbidden by WAF: Malicious bot detected.",
+            errRate: "⚠️Too many requests. Please try again later.",
+            errGeneral: "❌Failed to fetch data. Check your network."
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        const t = i18n[currentLang];
+        document.getElementById('title').innerText = t.title;
+        document.getElementById('keywordInput').placeholder = t.placeholder;
+        document.getElementById('btnText').innerText = t.searchBtn;
+        document.getElementById('langBtn').innerText = t.langBtn;
+    }
+
+    async function searchNews() {
+        const keyword = document.getElementById('keywordInput').value.trim();
+        if (!keyword) return;
+
+        const t = i18n[currentLang];
+        const btn = document.getElementById('searchBtn');
+        const btnText = document.getElementById('btnText');
+        const list = document.getElementById('resultsList');
+        
+        // 状态切换：加载中
+        btn.disabled = true;
+        btnText.innerText = t.searching;
+        list.innerHTML = '<li style="border-color: var(--text-muted); color: var(--text-muted);">Loading data pipeline...</li>';
+
+        try {
+            const response = await fetch(`/api/search?keyword=${encodeURIComponent(keyword)}`);
+            
+            // 核心：拦截后端的各种防线报错
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (response.status === 503) throw new Error(t.errSLA);
+                if (response.status === 403) throw new Error(t.errWAF);
+                if (response.status === 429) throw new Error(t.errRate);
+                throw new Error(errorData.detail || t.errGeneral);
+            }
+
+            const data = await response.json();
+            list.innerHTML = ''; // 清空加载提示
+
+            if (data.data && data.data.length > 0) {
+                data.data.forEach((news, index) => {
+                    const li = document.createElement('li');
+                    // 加个序号显得更专业
+                    li.innerHTML = `<strong style="color:var(--text-muted); margin-right: 10px;">${String(index + 1).padStart(2, '0')}</strong> ${news}`;
+                    list.appendChild(li);
+                });
+            } else {
+                list.innerHTML = `<li>${t.emptyMsg}</li>`;
+            }
+        } catch (error) {
+            // 显示错误信息
+            list.innerHTML = `<li class="error-msg">🚨 ${error.message}</li>`;
+        } finally {
+            // 恢复按钮状态
+            btn.disabled = false;
+            btnText.innerText = t.searchBtn;
+        }
+    }
+</script>
+
+</body>
+</html>
+```
